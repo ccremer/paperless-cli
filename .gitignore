@@ -1,0 +1,10 @@
+# Goreleaser
+/dist/
+/.github/release-notes.md
+
+# Build
+/paperless-cli
+*.out
+
+# work
+/.work/
