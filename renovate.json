@@ -1,6 +1,45 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base"
+    "config:base",
+    ":gitSignOff",
+    ":disableDependencyDashboard"
+  ],
+  "labels": [
+    "kind:dependency"
+  ],
+  "postUpdateOptions": [
+    "gomodTidy"
+  ],
+  "packageRules": [
+    {
+      "matchPackagePatterns": [
+        "golang.org/x/*"
+      ],
+      "groupName": "utils",
+      "schedule": [
+        "on the first day of the month"
+      ],
+      "automerge": true
+    },
+    {
+      "matchPackagePatterns": [
+        "github.com/urfave/cli/v2"
+      ],
+      "groupName": "urfave/cli/v2",
+      "schedule": [
+        "on the first day of the month"
+      ]
+    },
+    {
+      "matchPaths": [
+        "docs/**"
+      ],
+      "groupName": "npm",
+      "schedule": [
+        "on the first day of the month"
+      ],
+      "automerge": true
+    }
   ]
 }
