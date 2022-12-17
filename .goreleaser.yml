@@ -1,0 +1,64 @@
+# Make sure to check the documentation at http://goreleaser.com
+builds:
+  - env:
+      - CGO_ENABLED=0 # this is needed otherwise the Docker image build is faulty
+    goarch:
+      - amd64
+      - arm64
+    goos:
+      - linux
+    goarm:
+      - 8
+
+archives:
+  - format: binary
+    name_template: "{{ .Binary }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+
+checksum:
+  name_template: checksums.txt
+
+snapshot:
+  name_template: "{{ .Tag }}-snapshot"
+
+nfpms:
+  - vendor: ccremer
+    homepage: https://github.com/ccremer/paperless-cli
+    maintainer: ccremer
+    description: CLI tool to interact with paperless-ngx remote API
+    license: GPLv3
+    file_name_template: "{{ .Binary }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    formats:
+      - deb
+      - rpm
+
+dockers:
+  - goarch: amd64
+    use: buildx
+    build_flag_templates:
+      - "--platform=linux/amd64"
+    image_templates:
+      - "{{ .Env.CONTAINER_REGISTRY }}/{{ .Env.IMAGE_NAME }}:v{{ .Version }}-amd64"
+
+  - goarch: arm64
+    use: buildx
+    build_flag_templates:
+      - "--platform=linux/arm64/v8"
+    image_templates:
+      - "{{ .Env.CONTAINER_REGISTRY }}/{{ .Env.IMAGE_NAME }}:v{{ .Version }}-arm64"
+
+docker_manifests:
+  ## ghcr.io
+  # For prereleases, updating `latest` does not make sense.
+  # Only the image for the exact version should be pushed.
+  - name_template: "{{ if not .Prerelease }}{{ .Env.CONTAINER_REGISTRY }}/{{ .Env.IMAGE_NAME }}:latest{{ end }}"
+    image_templates:
+      - "{{ .Env.CONTAINER_REGISTRY }}/{{ .Env.IMAGE_NAME }}:v{{ .Version }}-amd64"
+      - "{{ .Env.CONTAINER_REGISTRY }}/{{ .Env.IMAGE_NAME }}:v{{ .Version }}-arm64"
+
+  - name_template: "{{ .Env.CONTAINER_REGISTRY }}/{{ .Env.IMAGE_NAME }}:v{{ .Version }}"
+    image_templates:
+      - "{{ .Env.CONTAINER_REGISTRY }}/{{ .Env.IMAGE_NAME }}:v{{ .Version }}-amd64"
+      - "{{ .Env.CONTAINER_REGISTRY }}/{{ .Env.IMAGE_NAME }}:v{{ .Version }}-arm64"
+
+release:
+  prerelease: auto
