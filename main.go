@@ -25,7 +25,7 @@ func main() {
 	app := NewApp()
 	err := app.Run(os.Args)
 	if err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "%v\n", err)
+		logger.Error(err, "Fatal error")
 		os.Exit(1)
 	}
 }

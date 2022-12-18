@@ -1,23 +1,80 @@
 package main
 
 import (
+	"fmt"
+
+	"github.com/ccremer/clustercode/pkg/paperless"
+	"github.com/ccremer/plogr"
+	"github.com/go-logr/logr"
+	"github.com/pterm/pterm"
 	"github.com/urfave/cli/v2"
 )
 
 type UploadCommand struct {
 	cli.Command
+
+	PaperlessURL   string
+	PaperlessToken string
+	PaperlessUser  string
+
+	CreatedAt     cli.Timestamp
+	DocumentTitle string
+	DocumentType  string
+	Correspondent string
+	DocumentTags  cli.StringSlice
 }
 
 func newUploadCommand() *UploadCommand {
 	c := &UploadCommand{}
 	c.Command = cli.Command{
 		Name:        "upload",
-		Description: "Uploads a local document to Paperless instance",
+		Description: "Uploads local document(s) to Paperless instance",
+		Before:      LogMetadata,
 		Action:      c.Action,
+
+		Flags: []cli.Flag{
+			newURLFlag(&c.PaperlessURL),
+			newUsernameFlag(&c.PaperlessUser),
+			newTokenFlag(&c.PaperlessToken),
+			newCreatedAtFlag(&c.CreatedAt),
+			newTitleFlag(&c.DocumentTitle),
+			newDocumentTypeFlag(&c.DocumentType),
+			newCorrespondentFlag(&c.Correspondent),
+			newTagFlag(&c.DocumentTags),
+		},
+		ArgsUsage: "[FILES...]",
 	}
 	return c
 }
 
 func (c *UploadCommand) Action(ctx *cli.Context) error {
-	return LogMetadata(ctx)
+	log := logr.FromContextOrDiscard(ctx.Context)
+
+	if ctx.NArg() == 0 {
+		return fmt.Errorf("at least one file is required")
+	}
+
+	params := paperless.UploadParams{}
+
+	if created := c.CreatedAt.Value(); created != nil {
+		params.Created = *created
+		log = log.WithValues("created", created.Format("2006-02-03"))
+	}
+	params.DocumentType, params.Title, params.Correspondent = c.DocumentType, c.DocumentTitle, c.Correspondent
+	params.Tags = c.DocumentTags.Value()
+	log = log.WithValues("title", params.Title, "type", params.DocumentType, "tags", params.Tags)
+
+	clt := paperless.NewClient(c.PaperlessURL, c.PaperlessUser, c.PaperlessToken)
+	for _, arg := range ctx.Args().Slice() {
+		log.Info("Uploading file", "file", arg)
+		err := clt.Upload(ctx.Context, arg, params)
+		if err != nil {
+			log.Error(err, "Could not upload file")
+			continue
+		}
+		pterm.Success.Println(plogr.DefaultFormatter("File uploaded", map[string]interface{}{
+			"file": arg,
+		}))
+	}
+	return nil
 }
