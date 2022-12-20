@@ -74,3 +74,12 @@ func newTagFlag(dest *cli.StringSlice) *cli.StringSliceFlag {
 		Destination: dest,
 	}
 }
+
+func newConsumeDirFlag(dest *string) *cli.StringFlag {
+	return &cli.StringFlag{
+		Name: "consume-dir", EnvVars: []string{"CONSUME_DIR"},
+		Usage:       "the directory name which to consume files.",
+		Required:    true,
+		Destination: dest,
+	}
+}

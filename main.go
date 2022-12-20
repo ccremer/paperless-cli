@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/pterm/pterm"
 	"github.com/urfave/cli/v2"
 )
 
@@ -25,7 +26,7 @@ func main() {
 	app := NewApp()
 	err := app.Run(os.Args)
 	if err != nil {
-		logger.Error(err, "Fatal error")
+		pterm.Error.Println(err.Error())
 		os.Exit(1)
 	}
 }
@@ -42,6 +43,7 @@ func NewApp() *cli.App {
 		},
 		Commands: []*cli.Command{
 			&newUploadCommand().Command,
+			&newConsumeCommand().Command,
 		},
 	}
 	return app
