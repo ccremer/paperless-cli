@@ -10,6 +10,8 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+var logger logr.Logger
+
 func init() {
 	// Remove `-v` short option from --version flag
 	cli.VersionFlag.(*cli.BoolFlag).Aliases = nil
@@ -33,13 +35,14 @@ func LogMetadata(c *cli.Context) error {
 }
 
 func setupLogging(c *cli.Context) error {
-	log := newPlogger()
-	c.Context = logr.NewContext(c.Context, log)
+	logger = newPlogger()
+	c.Context = logr.NewContext(c.Context, logger)
 	return nil
 }
 
 func newPlogger() logr.Logger {
 	sink := plogr.NewPtermSink()
 	sink.FallbackPrinter = &pterm.Debug
+	sink.ErrorPrinter.ShowLineNumber = false
 	return logr.New(sink)
 }
