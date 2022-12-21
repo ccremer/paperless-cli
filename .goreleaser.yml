@@ -30,6 +30,12 @@ nfpms:
     formats:
       - deb
       - rpm
+    contents:
+      - src: package/systemd.service
+        dst: /lib/systemd/system/paperless-consume.service
+      - src: package/systemd.env
+        dst: /etc/default/paperless-cli
+        type: config
 
 dockers:
   - goarch: amd64
