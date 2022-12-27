@@ -25,9 +25,9 @@ type ConsumeCommand struct {
 func newConsumeCommand() *ConsumeCommand {
 	c := &ConsumeCommand{}
 	c.Command = cli.Command{
-		Name:        "consume",
-		Description: "Consumes a local directory and uploads each file to Paperless instance. The files will be deleted once uploaded.",
-		Action:      actions(LogMetadata, c.Action),
+		Name:   "consume",
+		Usage:  "Consumes a local directory and uploads each file to Paperless instance. The files will be deleted once uploaded.",
+		Action: actions(LogMetadata, c.Action),
 
 		Flags: []cli.Flag{
 			newURLFlag(&c.PaperlessURL),

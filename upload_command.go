@@ -29,8 +29,8 @@ type UploadCommand struct {
 func newUploadCommand() *UploadCommand {
 	c := &UploadCommand{}
 	c.Command = cli.Command{
-		Name:        "upload",
-		Description: "Uploads local document(s) to Paperless instance",
+		Name:  "upload",
+		Usage: "Uploads local document(s) to Paperless instance",
 		Before: func(ctx *cli.Context) error {
 			if ctx.NArg() == 0 {
 				ctx.Command.Subcommands = nil // required to print usage of subcommand

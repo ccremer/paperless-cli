@@ -101,8 +101,10 @@ func newConsumeDirFlag(dest *string) *cli.StringFlag {
 func checkEmptyString(flagName string) func(*cli.Context, string) error {
 	return func(ctx *cli.Context, s string) error {
 		if s == "" {
+			subcommands := ctx.Command.Subcommands
 			ctx.Command.Subcommands = nil // required to print usage of subcommand
 			_ = cli.ShowCommandHelp(ctx, ctx.Command.Name)
+			ctx.Command.Subcommands = subcommands
 			return fmt.Errorf(`Required flag %q not set`, flagName)
 		}
 		return nil
