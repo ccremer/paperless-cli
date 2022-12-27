@@ -29,8 +29,15 @@ func newUploadCommand() *UploadCommand {
 	c.Command = cli.Command{
 		Name:        "upload",
 		Description: "Uploads local document(s) to Paperless instance",
-		Before:      LogMetadata,
-		Action:      c.Action,
+		Before: func(ctx *cli.Context) error {
+			if ctx.NArg() == 0 {
+				ctx.Command.Subcommands = nil // required to print usage of subcommand
+				_ = cli.ShowCommandHelp(ctx, ctx.Command.Name)
+				return fmt.Errorf("At least one file is required")
+			}
+			return nil
+		},
+		Action: actions(LogMetadata, c.Action),
 
 		Flags: []cli.Flag{
 			newURLFlag(&c.PaperlessURL),
@@ -49,10 +56,6 @@ func newUploadCommand() *UploadCommand {
 
 func (c *UploadCommand) Action(ctx *cli.Context) error {
 	log := logr.FromContextOrDiscard(ctx.Context)
-
-	if ctx.NArg() == 0 {
-		return fmt.Errorf("at least one file is required")
-	}
 
 	params := paperless.UploadParams{}
 

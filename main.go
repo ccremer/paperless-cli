@@ -62,3 +62,14 @@ func envVars(suffixes ...string) []string {
 	}
 	return arr
 }
+
+func actions(actions ...cli.ActionFunc) cli.ActionFunc {
+	return func(ctx *cli.Context) error {
+		for _, action := range actions {
+			if err := action(ctx); err != nil {
+				return err
+			}
+		}
+		return nil
+	}
+}

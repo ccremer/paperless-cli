@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/urfave/cli/v2"
 )
 
@@ -17,6 +19,7 @@ func newURLFlag(dest *string) *cli.StringFlag {
 		Name: "url", EnvVars: envVars("URL"),
 		Usage:       "URL endpoint of the paperless instance.",
 		Required:    true,
+		Action:      checkEmptyString("url"),
 		Destination: dest,
 	}
 }
@@ -24,7 +27,9 @@ func newURLFlag(dest *string) *cli.StringFlag {
 func newTokenFlag(dest *string) *cli.StringFlag {
 	return &cli.StringFlag{
 		Name: "token", EnvVars: envVars("TOKEN"),
-		Usage:       "Password or Token of the paperless instance.",
+		Usage:       "password or token of the paperless instance.",
+		Required:    true,
+		Action:      checkEmptyString("token"),
 		Destination: dest,
 	}
 }
@@ -81,5 +86,17 @@ func newConsumeDirFlag(dest *string) *cli.StringFlag {
 		Usage:       "the directory name which to consume files.",
 		Required:    true,
 		Destination: dest,
+		Action:      checkEmptyString("consume-dir"),
+	}
+}
+
+func checkEmptyString(flagName string) func(*cli.Context, string) error {
+	return func(ctx *cli.Context, s string) error {
+		if s == "" {
+			ctx.Command.Subcommands = nil // required to print usage of subcommand
+			_ = cli.ShowCommandHelp(ctx, ctx.Command.Name)
+			return fmt.Errorf(`Required flag %q not set`, flagName)
+		}
+		return nil
 	}
 }
