@@ -6,7 +6,6 @@ import (
 
 	"github.com/ccremer/plogr"
 	"github.com/go-logr/logr"
-	"github.com/pterm/pterm"
 	"github.com/urfave/cli/v2"
 )
 
@@ -35,14 +34,17 @@ func LogMetadata(c *cli.Context) error {
 }
 
 func setupLogging(c *cli.Context) error {
-	logger = newPlogger()
+	sink := newSink(c.Int(newLogLevelFlag().Name))
+	logger = logr.New(sink)
 	c.Context = logr.NewContext(c.Context, logger)
 	return nil
 }
 
-func newPlogger() logr.Logger {
+func newSink(level int) *plogr.PtermSink {
 	sink := plogr.NewPtermSink()
-	sink.FallbackPrinter = &pterm.Debug
-	sink.ErrorPrinter.ShowLineNumber = false
-	return logr.New(sink)
+	sink.ErrorPrinter.ShowLineNumber = true
+	for i := 1; i <= level; i++ {
+		sink.SetLevelEnabled(i, true)
+	}
+	return &sink
 }

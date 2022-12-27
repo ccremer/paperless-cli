@@ -5,6 +5,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/ccremer/clustercode/pkg/consumer"
 	"github.com/ccremer/clustercode/pkg/paperless"
@@ -20,6 +21,7 @@ type ConsumeCommand struct {
 	PaperlessUser  string
 
 	ConsumeDirName string
+	ConsumeDelay   time.Duration
 }
 
 func newConsumeCommand() *ConsumeCommand {
@@ -34,6 +36,7 @@ func newConsumeCommand() *ConsumeCommand {
 			newUsernameFlag(&c.PaperlessUser),
 			newTokenFlag(&c.PaperlessToken),
 			newConsumeDirFlag(&c.ConsumeDirName),
+			newConsumeDelayFlag(&c.ConsumeDelay),
 		},
 	}
 	return c
@@ -75,7 +78,7 @@ func (c *ConsumeCommand) Action(ctx *cli.Context) error {
 		return fmt.Errorf("cannot walk consumption dir: %w", walkErr)
 	}
 
-	watchErr := consumer.StartWatchingDir(ctx.Context, c.ConsumeDirName, func(filePath string) {
+	watchErr := consumer.StartWatchingDir(ctx.Context, c.ConsumeDirName, c.ConsumeDelay, func(filePath string) {
 		q.Put(filePath)
 	})
 	if watchErr != nil {
