@@ -50,8 +50,9 @@ sudo systemctl start paperless-consume
 
 ## Why does this exist?
 
-I didn't any other projects or means to consume a directory but _uploads_ the documents via API.
-In my case, I can't configure the scanner to upload to the consume dir as prepared by paperless-already, so I created a tool that also watches a directory, but uploads them to Paperless instead.
+I didn't find any other projects or means to consume a directory that _uploads_ the documents via API.
+In my case, I can't configure the scanner to directly upload to the consume dir as setup by paperless-already, I have to watch the dir on a different host.
+So I created a tool that also watches a directory, but uploads them to Paperless instead.
 
 Other projects that I've found:
 
