@@ -19,6 +19,8 @@ include Makefile.vars.mk
 # Following includes do not print warnings or error if files aren't found
 # Optional Documentation module.
 -include docs/docs.mk
+# Optional local env module.
+-include test/local.mk
 
 .PHONY: help
 help: ## Show this help
