@@ -27,8 +27,7 @@ func newConsumeCommand() *ConsumeCommand {
 	c.Command = cli.Command{
 		Name:        "consume",
 		Description: "Consumes a local directory and uploads each file to Paperless instance. The files will be deleted once uploaded.",
-		Before:      LogMetadata,
-		Action:      c.Action,
+		Action:      actions(LogMetadata, c.Action),
 
 		Flags: []cli.Flag{
 			newURLFlag(&c.PaperlessURL),
