@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/pterm/pterm"
+	"github.com/ccremer/plogr"
 	"github.com/urfave/cli/v2"
 )
 
@@ -26,7 +26,7 @@ func main() {
 	app := NewApp()
 	err := app.Run(os.Args)
 	if err != nil {
-		pterm.Error.Println(err.Error())
+		plogr.DefaultErrorPrinter.Println(err.Error())
 		os.Exit(1)
 	}
 }

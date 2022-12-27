@@ -8,7 +8,7 @@ import (
 
 func newLogLevelFlag() *cli.IntFlag {
 	return &cli.IntFlag{
-		Name: "log-level", Aliases: []string{"v"}, EnvVars: envVars("LOG_LEVEL"),
+		Name: "log-level", Aliases: []string{"v"}, EnvVars: []string{"LOG_LEVEL"},
 		Usage: "number of the log level verbosity",
 		Value: 0,
 	}
