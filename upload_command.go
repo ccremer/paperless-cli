@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/ccremer/clustercode/pkg/paperless"
 	"github.com/ccremer/plogr"
@@ -17,11 +18,12 @@ type UploadCommand struct {
 	PaperlessToken string
 	PaperlessUser  string
 
-	CreatedAt     cli.Timestamp
-	DocumentTitle string
-	DocumentType  string
-	Correspondent string
-	DocumentTags  cli.StringSlice
+	CreatedAt         cli.Timestamp
+	DocumentTitle     string
+	DocumentType      string
+	Correspondent     string
+	DocumentTags      cli.StringSlice
+	DeleteAfterUpload bool
 }
 
 func newUploadCommand() *UploadCommand {
@@ -48,6 +50,7 @@ func newUploadCommand() *UploadCommand {
 			newDocumentTypeFlag(&c.DocumentType),
 			newCorrespondentFlag(&c.Correspondent),
 			newTagFlag(&c.DocumentTags),
+			newDeleteAfterUploadFlag(&c.DeleteAfterUpload),
 		},
 		ArgsUsage: "[FILES...]",
 	}
@@ -78,6 +81,19 @@ func (c *UploadCommand) Action(ctx *cli.Context) error {
 		pterm.Success.Println(plogr.DefaultFormatter("File uploaded", map[string]interface{}{
 			"file": arg,
 		}))
+		if c.DeleteAfterUpload {
+			c.deleteAfterUpload(arg)
+		}
 	}
 	return nil
+}
+
+func (c *UploadCommand) deleteAfterUpload(arg string) {
+	err := os.Remove(arg)
+	if err != nil {
+		pterm.Warning.Println(plogr.DefaultFormatter("File could not be deleted", map[string]interface{}{
+			"file":  arg,
+			"error": err,
+		}))
+	}
 }

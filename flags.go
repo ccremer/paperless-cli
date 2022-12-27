@@ -80,6 +80,14 @@ func newTagFlag(dest *cli.StringSlice) *cli.StringSliceFlag {
 	}
 }
 
+func newDeleteAfterUploadFlag(dest *bool) *cli.BoolFlag {
+	return &cli.BoolFlag{
+		Name: "delete-after-upload", EnvVars: envVars("DELETE_AFTER_UPLOAD"),
+		Usage:       "deletes the file(s) after upload",
+		Destination: dest,
+	}
+}
+
 func newConsumeDirFlag(dest *string) *cli.StringFlag {
 	return &cli.StringFlag{
 		Name: "consume-dir", EnvVars: []string{"CONSUME_DIR"},
