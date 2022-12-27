@@ -11,7 +11,7 @@ import (
 	"github.com/go-logr/logr"
 )
 
-func StartWatchingDir(ctx context.Context, dir string, callback func(filePath string)) error {
+func StartWatchingDir(ctx context.Context, dir string, resetDelay time.Duration, callback func(filePath string)) error {
 	log := logr.FromContextOrDiscard(ctx)
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
@@ -19,7 +19,7 @@ func StartWatchingDir(ctx context.Context, dir string, callback func(filePath st
 	}
 
 	go func() {
-		waitFor := 1 * time.Second
+		waitFor := resetDelay
 
 		// Keep track of the timers, as [path]timer.
 		timers := sync.Map{}
@@ -57,7 +57,8 @@ func StartWatchingDir(ctx context.Context, dir string, callback func(filePath st
 					t.(*time.Timer).Stop()
 					timers.Store(e.Name, t)
 				}
-				// Reset the timer for this path, so it will start from 100ms again.
+				// Reset the timer for this path, so it will start the delay again.
+				log.V(3).Info("Resetting timer", "delay", waitFor)
 				t.(*time.Timer).Reset(waitFor)
 			}
 		}

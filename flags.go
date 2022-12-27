@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/urfave/cli/v2"
 )
@@ -98,15 +99,34 @@ func newConsumeDirFlag(dest *string) *cli.StringFlag {
 	}
 }
 
+func newConsumeDelayFlag(dest *time.Duration) *cli.DurationFlag {
+	return &cli.DurationFlag{
+		Name: "consume-delay", EnvVars: []string{"CONSUME_DELAY"},
+		Usage:       "the delay after detecting the last file write operation before uploading it.",
+		Value:       1 * time.Second,
+		Destination: dest,
+		Action: func(ctx *cli.Context, duration time.Duration) error {
+			if duration.Milliseconds() < 100 {
+				return showFlagError(ctx, fmt.Errorf("Duration of flag %q must be at least 100ms", "consume-delay"))
+			}
+			return nil
+		},
+	}
+}
+
 func checkEmptyString(flagName string) func(*cli.Context, string) error {
 	return func(ctx *cli.Context, s string) error {
 		if s == "" {
-			subcommands := ctx.Command.Subcommands
-			ctx.Command.Subcommands = nil // required to print usage of subcommand
-			_ = cli.ShowCommandHelp(ctx, ctx.Command.Name)
-			ctx.Command.Subcommands = subcommands
-			return fmt.Errorf(`Required flag %q not set`, flagName)
+			return showFlagError(ctx, fmt.Errorf(`Required flag %q not set`, flagName))
 		}
 		return nil
 	}
+}
+
+func showFlagError(ctx *cli.Context, err error) error {
+	subcommands := ctx.Command.Subcommands
+	ctx.Command.Subcommands = nil // required to print usage of subcommand
+	_ = cli.ShowCommandHelp(ctx, ctx.Command.Name)
+	ctx.Command.Subcommands = subcommands
+	return err
 }
