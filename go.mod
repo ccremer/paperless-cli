@@ -7,7 +7,7 @@ require (
 	github.com/fsnotify/fsnotify v1.6.0
 	github.com/go-logr/logr v1.2.3
 	github.com/pterm/pterm v0.12.51
-	github.com/urfave/cli/v2 v2.23.5
+	github.com/urfave/cli/v2 v2.23.7
 )
 
 require (
