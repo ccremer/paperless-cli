@@ -33,7 +33,6 @@ func (c BulkDownloadContent) String() string {
 }
 
 // BulkDownload downloads the documents identified by BulkDownloadParams.DocumentIDs and saves to the given targetPath.
-// If BulkDownloadParams.DocumentIDs is empty, all documents will be downloaded.
 // If targetPath is empty, it will use the suggested file name from Paperless in the current working dir.
 func (clt *Client) BulkDownload(ctx context.Context, targetPath string, params BulkDownloadParams) error {
 	req, err := clt.makeBulkDownloadRequest(ctx, params)
@@ -80,7 +79,7 @@ func (clt *Client) makeBulkDownloadRequest(ctx context.Context, params BulkDownl
 	body := bytes.NewReader(marshal)
 
 	path := clt.URL + "/api/documents/bulk_download/"
-	log.V(1).Info("Preparing request", "path", path)
+	log.V(1).Info("Preparing request", "path", path, "document_ids", params.DocumentIDs)
 	req, err := http.NewRequestWithContext(ctx, "POST", path, body)
 	if err != nil {
 		return nil, fmt.Errorf("cannot prepare request: %w", err)
