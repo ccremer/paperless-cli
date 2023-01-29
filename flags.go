@@ -154,6 +154,14 @@ func newUnzipFlag(dest *bool) *cli.BoolFlag {
 	}
 }
 
+func newOverwriteFlag(dest *bool) *cli.BoolFlag {
+	return &cli.BoolFlag{
+		Name: "overwrite", EnvVars: []string{"DOWNLOAD_OVERWRITE"},
+		Usage:       "deletes existing file(s) before downloading.",
+		Destination: dest,
+	}
+}
+
 func checkEmptyString(flagName string) func(*cli.Context, string) error {
 	return func(ctx *cli.Context, s string) error {
 		if s == "" {
