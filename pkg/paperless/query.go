@@ -14,7 +14,9 @@ import (
 )
 
 type QueryParams struct {
-	TruncateContent bool `param:"truncate_content"`
+	TruncateContent bool   `param:"truncate_content"`
+	Ordering        string `param:"ordering"`
+	PageSize        int    `param:"page_size"`
 }
 
 type QueryResults struct {
@@ -57,7 +59,6 @@ func (clt *Client) makeQueryRequest(ctx context.Context, params QueryParams) (*h
 	log := logr.FromContextOrDiscard(ctx)
 
 	values := paramsToValues(params)
-	values.Set("ordering", "id")
 
 	path := clt.URL + "/api/documents/?" + values.Encode()
 	log.V(1).Info("Preparing request", "path", path)
@@ -84,6 +85,8 @@ func paramsToValues(params QueryParams) url.Values {
 			paramValue = strconv.FormatBool(field.Bool())
 		case reflect.String:
 			paramValue = field.String()
+		case reflect.Int:
+			paramValue = strconv.FormatInt(field.Int(), 10)
 		default:
 			panic(fmt.Errorf("not implemented type: %s", field.Kind()))
 		}

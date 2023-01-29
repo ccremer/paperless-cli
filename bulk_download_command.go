@@ -53,6 +53,8 @@ func (c *BulkDownloadCommand) Action(ctx *cli.Context) error {
 	log.Info("Getting list of documents")
 	documents, queryErr := clt.QueryDocuments(ctx.Context, paperless.QueryParams{
 		TruncateContent: true,
+		Ordering:        "id",
+		PageSize:        100,
 	})
 	if queryErr != nil {
 		return queryErr
