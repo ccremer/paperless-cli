@@ -31,14 +31,14 @@ func newUploadCommand() *UploadCommand {
 	c.Command = cli.Command{
 		Name:  "upload",
 		Usage: "Uploads local document(s) to Paperless instance",
-		Before: func(ctx *cli.Context) error {
+		Before: before(func(ctx *cli.Context) error {
 			if ctx.NArg() == 0 {
 				ctx.Command.Subcommands = nil // required to print usage of subcommand
 				_ = cli.ShowCommandHelp(ctx, ctx.Command.Name)
 				return fmt.Errorf("At least one file is required")
 			}
 			return nil
-		},
+		}, loadConfigFileFn),
 		Action: actions(LogMetadata, c.Action),
 
 		Flags: []cli.Flag{

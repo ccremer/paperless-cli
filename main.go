@@ -37,9 +37,10 @@ func NewApp() *cli.App {
 		Usage:   appLongName,
 		Version: fmt.Sprintf("%s, revision=%s, date=%s", version, commit, date),
 
-		Before: setupLogging,
+		Before: before(loadConfigFileFn, setupLogging),
 		Flags: []cli.Flag{
 			newLogLevelFlag(),
+			newConfigFileFlag(),
 		},
 		Commands: []*cli.Command{
 			&newUploadCommand().Command,
@@ -62,6 +63,17 @@ func envVars(suffixes ...string) []string {
 		arr[i] = env(suffixes[i])
 	}
 	return arr
+}
+
+func before(actions ...cli.BeforeFunc) cli.BeforeFunc {
+	return func(ctx *cli.Context) error {
+		for _, fn := range actions {
+			if err := fn(ctx); err != nil {
+				return err
+			}
+		}
+		return nil
+	}
 }
 
 func actions(actions ...cli.ActionFunc) cli.ActionFunc {
