@@ -8,7 +8,6 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"strings"
 
 	"github.com/go-logr/logr"
 )
@@ -34,7 +33,7 @@ func (c BulkDownloadContent) String() string {
 
 // BulkDownload downloads the documents identified by BulkDownloadParams.DocumentIDs and saves to the given targetPath.
 // If targetPath is empty, it will use the suggested file name from Paperless in the current working dir.
-func (clt *Client) BulkDownload(ctx context.Context, targetPath string, params BulkDownloadParams) error {
+func (clt *Client) BulkDownload(ctx context.Context, targetFile *os.File, params BulkDownloadParams) error {
 	req, err := clt.makeBulkDownloadRequest(ctx, params)
 	if err != nil {
 		return err
@@ -53,11 +52,8 @@ func (clt *Client) BulkDownload(ctx context.Context, targetPath string, params B
 		return fmt.Errorf("request failed: %s: %s", resp.Status, string(b))
 	}
 
-	out, err := os.Create(getTargetPathOrFromHeader(targetPath, resp.Header))
-	defer out.Close()
-
-	log.V(1).Info("Writing download content to file", "file", out.Name())
-	_, err = io.Copy(out, resp.Body)
+	log.V(1).Info("Writing download content to file", "file", targetFile.Name())
+	_, err = io.Copy(targetFile, resp.Body)
 	if err != nil {
 		return fmt.Errorf("cannot read response body: %w", err)
 	}
@@ -87,13 +83,4 @@ func (clt *Client) makeBulkDownloadRequest(ctx context.Context, params BulkDownl
 	clt.setAuth(req)
 	req.Header.Set("Content-Type", "application/json")
 	return req, nil
-}
-
-func getTargetPathOrFromHeader(v string, header http.Header) string {
-	if v != "" {
-		return v
-	}
-	raw := header.Get("content-disposition")
-	fileName := strings.TrimSuffix(strings.TrimPrefix(raw, `attachment; filename="`), `"`)
-	return fileName
 }

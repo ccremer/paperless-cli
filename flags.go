@@ -120,7 +120,7 @@ func newTargetPathFlag(dest *string) *cli.StringFlag {
 	return &cli.StringFlag{
 		Name: "target-path", EnvVars: []string{"DOWNLOAD_TARGET_PATH"},
 		Usage:       "target file path where documents are downloaded.",
-		DefaultText: "default file name in current working directory",
+		DefaultText: "documents.zip",
 		Destination: dest,
 	}
 }
@@ -143,6 +143,14 @@ func newDownloadContentFlag(dest *string) *cli.StringFlag {
 			}
 			return fmt.Errorf("parameter %q must be one of [%s]", "content", strings.Join(enum, ", "))
 		},
+	}
+}
+
+func newUnzipFlag(dest *bool) *cli.BoolFlag {
+	return &cli.BoolFlag{
+		Name: "unzip", EnvVars: []string{"DOWNLOAD_UNZIP"},
+		Usage:       "unzip the downloaded file.",
+		Destination: dest,
 	}
 }
 
