@@ -4,9 +4,9 @@ CLI tool to interact with paperless-ngx remote API
 
 ## Subcommands
 
-- `upload`: Uploads local document(s) to Paperless instance
+- `upload`: Uploads local document(s) to Paperless instance.
 - `consume`: Consumes a local directory and uploads each file to Paperless instance. The files will be deleted once uploaded.
-- `bulk-download`: 
+- `bulk-download`: Downloads all documents at once.
 
 ## Installation
 

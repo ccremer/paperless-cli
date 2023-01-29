@@ -27,7 +27,7 @@ func newBulkDownloadCommand() *BulkDownloadCommand {
 	c := &BulkDownloadCommand{}
 	c.Command = cli.Command{
 		Name:   "bulk-download",
-		Usage:  "Downloads multiple documents at once",
+		Usage:  "Downloads all documents at once",
 		Action: actions(LogMetadata, c.Action),
 		Flags: []cli.Flag{
 			newURLFlag(&c.PaperlessURL),
