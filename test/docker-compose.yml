@@ -42,6 +42,7 @@ services:
       PAPERLESS_REDIS: redis://broker:6379
       PAPERLESS_ADMIN_USER: admin
       PAPERLESS_ADMIN_PASSWORD: admin
+      PAPERLESS_FILENAME_FORMAT: "{created_year}/{correspondent}/{title}"
 
 volumes:
   redisdata:

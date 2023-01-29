@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
+	"github.com/ccremer/clustercode/pkg/paperless"
 	"github.com/urfave/cli/v2"
 )
 
@@ -111,6 +113,52 @@ func newConsumeDelayFlag(dest *time.Duration) *cli.DurationFlag {
 			}
 			return nil
 		},
+	}
+}
+
+func newTargetPathFlag(dest *string) *cli.StringFlag {
+	return &cli.StringFlag{
+		Name: "target-path", EnvVars: []string{"DOWNLOAD_TARGET_PATH"},
+		Usage:       "target file path where documents are downloaded.",
+		DefaultText: "documents.zip",
+		Destination: dest,
+	}
+}
+
+func newDownloadContentFlag(dest *string) *cli.StringFlag {
+	return &cli.StringFlag{
+		Name: "content", EnvVars: []string{"DOWNLOAD_CONTENT"},
+		Usage:       "selection of document variant.",
+		Value:       paperless.BulkDownloadArchives.String(),
+		Destination: dest,
+		Action: func(ctx *cli.Context, s string) error {
+			enum := []string{
+				paperless.BulkDownloadArchives.String(),
+				paperless.BulkDownloadOriginal.String(),
+				paperless.BulkDownloadBoth.String()}
+			for _, key := range enum {
+				if s == key {
+					return nil
+				}
+			}
+			return fmt.Errorf("parameter %q must be one of [%s]", "content", strings.Join(enum, ", "))
+		},
+	}
+}
+
+func newUnzipFlag(dest *bool) *cli.BoolFlag {
+	return &cli.BoolFlag{
+		Name: "unzip", EnvVars: []string{"DOWNLOAD_UNZIP"},
+		Usage:       "unzip the downloaded file.",
+		Destination: dest,
+	}
+}
+
+func newOverwriteFlag(dest *bool) *cli.BoolFlag {
+	return &cli.BoolFlag{
+		Name: "overwrite", EnvVars: []string{"DOWNLOAD_OVERWRITE"},
+		Usage:       "deletes existing file(s) before downloading.",
+		Destination: dest,
 	}
 }
 
