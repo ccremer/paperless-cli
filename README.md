@@ -49,6 +49,14 @@ sudo systemctl enable paperless-consume
 sudo systemctl start paperless-consume
 ```
 
+## Configuration
+
+Most config options of each command can be specified as both CLI flag and as an environment variable.
+Run each command with `--help` to view the variables names (if supported).
+
+Additionally, some options can be specified in a YAML file.
+Run `init` subcommand to initialize a new config file with the supported options.
+
 ## Why does this exist?
 
 I didn't find any other projects or means to consume a directory that _uploads_ the documents via API.
