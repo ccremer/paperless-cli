@@ -46,7 +46,10 @@ func (c *InitCommand) Action(ctx *cli.Context) error {
 		fmt.Println(string(b))
 		return nil
 	}
-	return os.WriteFile(configFilePath, b, 0644)
+	if _, statErr := os.Stat(configFilePath); statErr != nil && os.IsNotExist(statErr) {
+		return os.WriteFile(configFilePath, b, 0644)
+	}
+	return fmt.Errorf("target file %q exists already", configFilePath)
 }
 
 func getValueFor(flag cli.Flag) any {
