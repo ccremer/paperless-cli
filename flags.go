@@ -2,47 +2,56 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"time"
 
 	"github.com/ccremer/clustercode/pkg/paperless"
 	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v2/altsrc"
 )
 
-func newLogLevelFlag() *cli.IntFlag {
-	return &cli.IntFlag{
+func newConfigFileFlag() *cli.StringFlag {
+	return &cli.StringFlag{
+		Name: "config", EnvVars: []string{"CONFIG"},
+		Aliases: []string{"C"},
+		Value:   "config.yaml",
+		Usage:   "path to a config file containing additional config.",
+	}
+}
+
+func newLogLevelFlag() *altsrc.IntFlag {
+	return altsrc.NewIntFlag(&cli.IntFlag{
 		Name: "log-level", Aliases: []string{"v"}, EnvVars: []string{"LOG_LEVEL"},
 		Usage: "number of the log level verbosity",
 		Value: 0,
-	}
+	})
 }
 
-func newURLFlag(dest *string) *cli.StringFlag {
-	return &cli.StringFlag{
+func newURLFlag(dest *string) *altsrc.StringFlag {
+	return altsrc.NewStringFlag(&cli.StringFlag{
 		Name: "url", EnvVars: envVars("URL"),
 		Usage:       "URL endpoint of the paperless instance.",
-		Required:    true,
 		Action:      checkEmptyString("url"),
 		Destination: dest,
-	}
+	})
 }
 
-func newTokenFlag(dest *string) *cli.StringFlag {
-	return &cli.StringFlag{
+func newTokenFlag(dest *string) *altsrc.StringFlag {
+	return altsrc.NewStringFlag(&cli.StringFlag{
 		Name: "token", EnvVars: envVars("TOKEN"),
 		Usage:       "password or token of the paperless instance.",
-		Required:    true,
 		Action:      checkEmptyString("token"),
 		Destination: dest,
-	}
+	})
 }
 
-func newUsernameFlag(dest *string) *cli.StringFlag {
-	return &cli.StringFlag{
+func newUsernameFlag(dest *string) *altsrc.StringFlag {
+	return altsrc.NewStringFlag(&cli.StringFlag{
 		Name: "username", EnvVars: envVars("USERNAME"),
 		Usage:       "username for BasicAuth of the paperless instance. Leave empty to use token authentication.",
 		Destination: dest,
-	}
+	})
 }
 
 func newCreatedAtFlag(dest *cli.Timestamp) *cli.TimestampFlag {
@@ -91,18 +100,18 @@ func newDeleteAfterUploadFlag(dest *bool) *cli.BoolFlag {
 	}
 }
 
-func newConsumeDirFlag(dest *string) *cli.StringFlag {
-	return &cli.StringFlag{
+func newConsumeDirFlag(dest *string) *altsrc.StringFlag {
+	return altsrc.NewStringFlag(&cli.StringFlag{
 		Name: "consume-dir", EnvVars: []string{"CONSUME_DIR"},
 		Usage:       "the directory name which to consume files.",
 		Required:    true,
 		Destination: dest,
 		Action:      checkEmptyString("consume-dir"),
-	}
+	})
 }
 
-func newConsumeDelayFlag(dest *time.Duration) *cli.DurationFlag {
-	return &cli.DurationFlag{
+func newConsumeDelayFlag(dest *time.Duration) *altsrc.DurationFlag {
+	return altsrc.NewDurationFlag(&cli.DurationFlag{
 		Name: "consume-delay", EnvVars: []string{"CONSUME_DELAY"},
 		Usage:       "the delay after detecting the last file write operation before uploading it.",
 		Value:       1 * time.Second,
@@ -113,20 +122,20 @@ func newConsumeDelayFlag(dest *time.Duration) *cli.DurationFlag {
 			}
 			return nil
 		},
-	}
+	})
 }
 
-func newTargetPathFlag(dest *string) *cli.StringFlag {
-	return &cli.StringFlag{
+func newTargetPathFlag(dest *string) *altsrc.StringFlag {
+	return altsrc.NewStringFlag(&cli.StringFlag{
 		Name: "target-path", EnvVars: []string{"DOWNLOAD_TARGET_PATH"},
 		Usage:       "target file path where documents are downloaded.",
 		DefaultText: "documents.zip",
 		Destination: dest,
-	}
+	})
 }
 
-func newDownloadContentFlag(dest *string) *cli.StringFlag {
-	return &cli.StringFlag{
+func newDownloadContentFlag(dest *string) *altsrc.StringFlag {
+	return altsrc.NewStringFlag(&cli.StringFlag{
 		Name: "content", EnvVars: []string{"DOWNLOAD_CONTENT"},
 		Usage:       "selection of document variant.",
 		Value:       paperless.BulkDownloadArchives.String(),
@@ -143,23 +152,32 @@ func newDownloadContentFlag(dest *string) *cli.StringFlag {
 			}
 			return fmt.Errorf("parameter %q must be one of [%s]", "content", strings.Join(enum, ", "))
 		},
-	}
+	})
 }
 
-func newUnzipFlag(dest *bool) *cli.BoolFlag {
-	return &cli.BoolFlag{
+func newUnzipFlag(dest *bool) *altsrc.BoolFlag {
+	return altsrc.NewBoolFlag(&cli.BoolFlag{
 		Name: "unzip", EnvVars: []string{"DOWNLOAD_UNZIP"},
 		Usage:       "unzip the downloaded file.",
 		Destination: dest,
-	}
+	})
 }
 
-func newOverwriteFlag(dest *bool) *cli.BoolFlag {
-	return &cli.BoolFlag{
+func newOverwriteFlag(dest *bool) *altsrc.BoolFlag {
+	return altsrc.NewBoolFlag(&cli.BoolFlag{
 		Name: "overwrite", EnvVars: []string{"DOWNLOAD_OVERWRITE"},
 		Usage:       "deletes existing file(s) before downloading.",
 		Destination: dest,
+	})
+}
+
+func loadConfigFileFn(ctx *cli.Context) error {
+	path := ctx.String(newConfigFileFlag().Name)
+	flags := ctx.Command.Flags
+	if _, err := os.Stat(path); err != nil && os.IsNotExist(err) {
+		return nil
 	}
+	return altsrc.InitInputSourceWithContext(flags, altsrc.NewYamlSourceFromFlagFunc(newConfigFileFlag().Name))(ctx)
 }
 
 func checkEmptyString(flagName string) func(*cli.Context, string) error {

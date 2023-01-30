@@ -9,11 +9,13 @@ require (
 	github.com/pterm/pterm v0.12.51
 	github.com/stretchr/testify v1.8.1
 	github.com/urfave/cli/v2 v2.23.7
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
 	atomicgo.dev/cursor v0.1.1 // indirect
 	atomicgo.dev/keyboard v0.2.8 // indirect
+	github.com/BurntSushi/toml v1.2.1 // indirect
 	github.com/containerd/console v1.0.3 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -28,5 +30,4 @@ require (
 	golang.org/x/sys v0.0.0-20220908164124-27713097b956 // indirect
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	golang.org/x/text v0.4.0 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

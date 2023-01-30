@@ -28,6 +28,7 @@ func newBulkDownloadCommand() *BulkDownloadCommand {
 	c.Command = cli.Command{
 		Name:   "bulk-download",
 		Usage:  "Downloads all documents at once",
+		Before: loadConfigFileFn,
 		Action: actions(LogMetadata, c.Action),
 		Flags: []cli.Flag{
 			newURLFlag(&c.PaperlessURL),
