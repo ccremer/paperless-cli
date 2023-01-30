@@ -7,6 +7,7 @@ builds:
       - arm64
     goos:
       - linux
+      - windows
     goarm:
       - 8
 
