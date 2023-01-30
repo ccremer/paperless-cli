@@ -62,6 +62,7 @@ lint: lint-go git-diff ## All-in-one linting
 
 .PHONY: lint-go
 lint-go: fmt vet generate ## Run linting for Go code
+	go run . init -
 
 .PHONY: git-diff
 git-diff:
