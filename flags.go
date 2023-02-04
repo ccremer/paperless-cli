@@ -171,6 +171,15 @@ func newOverwriteFlag(dest *bool) *altsrc.BoolFlag {
 	})
 }
 
+func newIncrementalFlag(dest *bool) *altsrc.BoolFlag {
+	return altsrc.NewBoolFlag(&cli.BoolFlag{
+		Name: "incremental", EnvVars: []string{"DOWNLOAD_INCREMENTAL"},
+		Usage: fmt.Sprintf("only download the missing files and remove deleted documents. Implies --%s and --%s",
+			newUnzipFlag(nil).Name, newOverwriteFlag(nil).Name),
+		Destination: dest,
+	})
+}
+
 func loadConfigFileFn(ctx *cli.Context) error {
 	path := ctx.String(newConfigFileFlag().Name)
 	flags := ctx.Command.Flags
