@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/ccremer/clustercode/pkg/errors"
 	"github.com/go-logr/logr"
 )
 
@@ -54,10 +55,7 @@ func (clt *Client) BulkDownload(ctx context.Context, targetFile *os.File, params
 
 	log.V(1).Info("Writing download content to file", "file", targetFile.Name())
 	_, err = io.Copy(targetFile, resp.Body)
-	if err != nil {
-		return fmt.Errorf("cannot read response body: %w", err)
-	}
-	return nil
+	return errors.Wrap(err, "cannot read response body")
 }
 
 func (clt *Client) makeBulkDownloadRequest(ctx context.Context, params BulkDownloadParams) (*http.Request, error) {
