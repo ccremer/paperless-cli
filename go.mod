@@ -6,7 +6,7 @@ require (
 	github.com/ccremer/plogr v0.7.0
 	github.com/fsnotify/fsnotify v1.6.0
 	github.com/go-logr/logr v1.2.3
-	github.com/pterm/pterm v0.12.51
+	github.com/pterm/pterm v0.12.54
 	github.com/stretchr/testify v1.8.1
 	github.com/urfave/cli/v2 v2.24.2
 	gopkg.in/yaml.v3 v3.0.1
@@ -14,7 +14,7 @@ require (
 
 require (
 	atomicgo.dev/cursor v0.1.1 // indirect
-	atomicgo.dev/keyboard v0.2.8 // indirect
+	atomicgo.dev/keyboard v0.2.9 // indirect
 	github.com/BurntSushi/toml v1.2.1 // indirect
 	github.com/containerd/console v1.0.3 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
@@ -29,5 +29,5 @@ require (
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	golang.org/x/sys v0.0.0-20220908164124-27713097b956 // indirect
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
-	golang.org/x/text v0.4.0 // indirect
+	golang.org/x/text v0.6.0 // indirect
 )
