@@ -6,7 +6,7 @@ require (
 	github.com/ccremer/plogr v0.7.0
 	github.com/fsnotify/fsnotify v1.6.0
 	github.com/go-logr/logr v1.2.3
-	github.com/pterm/pterm v0.12.55
+	github.com/pterm/pterm v0.12.57
 	github.com/stretchr/testify v1.8.2
 	github.com/urfave/cli/v2 v2.24.4
 	gopkg.in/yaml.v3 v3.0.1
