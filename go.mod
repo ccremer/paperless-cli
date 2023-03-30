@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/ccremer/plogr v0.7.0
 	github.com/fsnotify/fsnotify v1.6.0
-	github.com/go-logr/logr v1.2.3
+	github.com/go-logr/logr v1.2.4
 	github.com/pterm/pterm v0.12.57
 	github.com/stretchr/testify v1.8.2
 	github.com/urfave/cli/v2 v2.24.4
