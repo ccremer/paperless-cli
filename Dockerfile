@@ -1,4 +1,4 @@
-FROM docker.io/library/alpine:3.18 as runtime
+FROM docker.io/library/alpine:3.19 as runtime
 
 ENTRYPOINT ["paperless-cli"]
 
