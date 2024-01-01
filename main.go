@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 	"time"
 
-	"github.com/ccremer/plogr"
 	"github.com/urfave/cli/v2"
 )
 
@@ -26,7 +26,7 @@ func main() {
 	app := NewApp()
 	err := app.Run(os.Args)
 	if err != nil {
-		plogr.DefaultErrorPrinter.Println(err.Error())
+		slog.Error(err.Error())
 		os.Exit(1)
 	}
 }

@@ -1,11 +1,12 @@
 package main
 
 import (
+	"log/slog"
 	"os"
 	"runtime"
 
-	"github.com/ccremer/plogr"
 	"github.com/go-logr/logr"
+	"github.com/pterm/pterm"
 	"github.com/urfave/cli/v2"
 )
 
@@ -34,17 +35,26 @@ func LogMetadata(c *cli.Context) error {
 }
 
 func setupLogging(c *cli.Context) error {
-	sink := newSink(c.Int(newLogLevelFlag().Name))
-	logger = logr.New(sink)
-	c.Context = logr.NewContext(c.Context, logger)
+	backend := pterm.DefaultLogger.
+		WithLevel(mapLevel(c.Int(newLogLevelFlag().Name))).
+		WithCaller().
+		WithCallerOffset(4)
+	handler := pterm.NewSlogHandler(backend)
+	slogger := slog.New(handler)
+	slog.SetDefault(slogger)
+	c.Context = logr.NewContextWithSlogLogger(c.Context, slogger)
 	return nil
 }
 
-func newSink(level int) *plogr.PtermSink {
-	sink := plogr.NewPtermSink()
-	sink.ErrorPrinter.ShowLineNumber = true
-	for i := 1; i <= level; i++ {
-		sink.SetLevelEnabled(i, true)
+func mapLevel(level int) pterm.LogLevel {
+	switch level {
+	case -1:
+		return pterm.LogLevelDisabled
+	case 1:
+		return pterm.LogLevelDebug
 	}
-	return &sink
+	if level >= 2 {
+		return pterm.LogLevelTrace
+	}
+	return pterm.LogLevelInfo
 }

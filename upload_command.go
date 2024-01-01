@@ -5,9 +5,7 @@ import (
 	"os"
 
 	"github.com/ccremer/clustercode/pkg/paperless"
-	"github.com/ccremer/plogr"
 	"github.com/go-logr/logr"
-	"github.com/pterm/pterm"
 	"github.com/urfave/cli/v2"
 )
 
@@ -78,22 +76,17 @@ func (c *UploadCommand) Action(ctx *cli.Context) error {
 			log.Error(err, "Could not upload file")
 			continue
 		}
-		pterm.Success.Println(plogr.DefaultFormatter("File uploaded", map[string]interface{}{
-			"file": arg,
-		}))
+		log.Info("File uploaded", "file", arg)
 		if c.DeleteAfterUpload {
-			c.deleteAfterUpload(arg)
+			c.deleteAfterUpload(log, arg)
 		}
 	}
 	return nil
 }
 
-func (c *UploadCommand) deleteAfterUpload(arg string) {
+func (c *UploadCommand) deleteAfterUpload(log logr.Logger, arg string) {
 	err := os.Remove(arg)
 	if err != nil {
-		pterm.Warning.Println(plogr.DefaultFormatter("File could not be deleted", map[string]interface{}{
-			"file":  arg,
-			"error": err,
-		}))
+		log.Info("File could not be deleted", "file", arg, "error", err)
 	}
 }
