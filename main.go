@@ -46,6 +46,7 @@ func NewApp() *cli.App {
 			&newUploadCommand().Command,
 			&newBulkDownloadCommand().Command,
 			&newConsumeCommand().Command,
+			&newPostConsumeCommand().Command,
 			&newInitCommand().Command,
 		},
 	}

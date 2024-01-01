@@ -13,10 +13,7 @@ import (
 
 type UploadCommand struct {
 	cli.Command
-
-	PaperlessURL   string
-	PaperlessToken string
-	PaperlessUser  string
+	BaseCommand
 
 	CreatedAt         cli.Timestamp
 	DocumentTitle     string

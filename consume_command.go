@@ -15,10 +15,7 @@ import (
 
 type ConsumeCommand struct {
 	cli.Command
-
-	PaperlessURL   string
-	PaperlessToken string
-	PaperlessUser  string
+	BaseCommand
 
 	ConsumeDirName string
 	ConsumeDelay   time.Duration

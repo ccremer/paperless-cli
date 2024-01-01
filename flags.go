@@ -11,6 +11,28 @@ import (
 	"github.com/urfave/cli/v2/altsrc"
 )
 
+type BaseCommand struct {
+	PaperlessURL   string
+	PaperlessToken string
+	PaperlessUser  string
+}
+
+type PostConsumeDocumentOptions struct {
+	Id               string
+	FileName         string
+	Created          time.Time
+	Modified         time.Time
+	Added            time.Time
+	SourcePath       string
+	ArchivePath      string
+	ThumbnailPath    string
+	DownloadUrl      string
+	ThumbnailUrl     string
+	Correspondent    string
+	Tags             []string
+	OriginalFileName string
+}
+
 func newConfigFileFlag() *cli.StringFlag {
 	return &cli.StringFlag{
 		Name: "config", EnvVars: []string{"CONFIG"},
@@ -199,9 +221,9 @@ func checkEmptyString(flagName string) func(*cli.Context, string) error {
 }
 
 func showFlagError(ctx *cli.Context, err error) error {
-	subcommands := ctx.Command.Subcommands
-	ctx.Command.Subcommands = nil // required to print usage of subcommand
+	// subcommands := ctx.Command.Subcommands
+	// ctx.Command.Subcommands = nil // required to print usage of subcommand
 	_ = cli.ShowCommandHelp(ctx, ctx.Command.Name)
-	ctx.Command.Subcommands = subcommands
+	// ctx.Command.Subcommands = subcommands
 	return err
 }
