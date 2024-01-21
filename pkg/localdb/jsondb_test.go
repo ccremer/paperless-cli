@@ -3,7 +3,7 @@ package localdb
 import (
 	"testing"
 
-	"github.com/ccremer/clustercode/pkg/paperless"
+	"github.com/ccremer/paperless-cli/pkg/paperless"
 	"github.com/stretchr/testify/assert"
 )
 

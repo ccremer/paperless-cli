@@ -6,10 +6,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/ccremer/clustercode/pkg/archive"
-	"github.com/ccremer/clustercode/pkg/errors"
-	"github.com/ccremer/clustercode/pkg/localdb"
-	"github.com/ccremer/clustercode/pkg/paperless"
+	"github.com/ccremer/paperless-cli/pkg/archive"
+	"github.com/ccremer/paperless-cli/pkg/errors"
+	"github.com/ccremer/paperless-cli/pkg/localdb"
+	"github.com/ccremer/paperless-cli/pkg/paperless"
 	"github.com/go-logr/logr"
 	"github.com/urfave/cli/v2"
 )

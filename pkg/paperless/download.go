@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/ccremer/clustercode/pkg/errors"
+	"github.com/ccremer/paperless-cli/pkg/errors"
 	"github.com/go-logr/logr"
 )
 

@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"sort"
 
-	"github.com/ccremer/clustercode/pkg/errors"
-	"github.com/ccremer/clustercode/pkg/paperless"
+	"github.com/ccremer/paperless-cli/pkg/errors"
+	"github.com/ccremer/paperless-cli/pkg/paperless"
 )
 
 type metadataContainer struct {
