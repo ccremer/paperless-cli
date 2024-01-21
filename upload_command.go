@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ccremer/clustercode/pkg/paperless"
+	"github.com/ccremer/paperless-cli/pkg/paperless"
 	"github.com/ccremer/plogr"
 	"github.com/go-logr/logr"
 	"github.com/pterm/pterm"

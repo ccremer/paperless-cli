@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/ccremer/clustercode/pkg/consumer"
-	"github.com/ccremer/clustercode/pkg/paperless"
+	"github.com/ccremer/paperless-cli/pkg/consumer"
+	"github.com/ccremer/paperless-cli/pkg/paperless"
 	"github.com/go-logr/logr"
 	"github.com/urfave/cli/v2"
 )
