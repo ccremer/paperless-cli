@@ -4,12 +4,13 @@ builds:
       - CGO_ENABLED=0 # this is needed otherwise the Docker image build is faulty
     goarch:
       - amd64
+      - arm
       - arm64
     goos:
       - linux
       - windows
     goarm:
-      - 8
+      - 7
 
 archives:
   - format: binary
