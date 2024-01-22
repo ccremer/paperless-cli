@@ -54,6 +54,14 @@ dockers:
     image_templates:
       - "{{ .Env.CONTAINER_REGISTRY }}/{{ .Env.IMAGE_NAME }}:v{{ .Version }}-arm64"
 
+  - goarch: arm
+    goarm: 7
+    use: buildx
+    build_flag_templates:
+      - "--platform=linux/arm/v7"
+    image_templates:
+      - "{{ .Env.CONTAINER_REGISTRY }}/{{ .Env.IMAGE_NAME }}:v{{ .Version }}-armv7"
+
 docker_manifests:
   ## ghcr.io
   # For prereleases, updating `latest` does not make sense.
@@ -62,11 +70,13 @@ docker_manifests:
     image_templates:
       - "{{ .Env.CONTAINER_REGISTRY }}/{{ .Env.IMAGE_NAME }}:v{{ .Version }}-amd64"
       - "{{ .Env.CONTAINER_REGISTRY }}/{{ .Env.IMAGE_NAME }}:v{{ .Version }}-arm64"
+      - "{{ .Env.CONTAINER_REGISTRY }}/{{ .Env.IMAGE_NAME }}:v{{ .Version }}-armv7"
 
   - name_template: "{{ .Env.CONTAINER_REGISTRY }}/{{ .Env.IMAGE_NAME }}:v{{ .Version }}"
     image_templates:
       - "{{ .Env.CONTAINER_REGISTRY }}/{{ .Env.IMAGE_NAME }}:v{{ .Version }}-amd64"
       - "{{ .Env.CONTAINER_REGISTRY }}/{{ .Env.IMAGE_NAME }}:v{{ .Version }}-arm64"
+      - "{{ .Env.CONTAINER_REGISTRY }}/{{ .Env.IMAGE_NAME }}:v{{ .Version }}-armv7"
 
 release:
   prerelease: auto
