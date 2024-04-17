@@ -2,6 +2,7 @@ package paperless
 
 import (
 	"net/http"
+	"strings"
 )
 
 type Client struct {
@@ -16,7 +17,7 @@ type Client struct {
 // If using token auth, `username` parameter can be left empty.
 func NewClient(url, username, passwordOrToken string) *Client {
 	return &Client{
-		URL:        url,
+		URL:        strings.TrimSuffix(url, "/"),
 		HttpClient: http.DefaultClient,
 		username:   username,
 		token:      passwordOrToken,
