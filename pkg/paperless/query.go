@@ -79,30 +79,37 @@ func (clt *Client) queryDocumentsInPage(ctx context.Context, params QueryParams)
 		return nil, err
 	}
 
+	result := QueryResult{}
+	if err := clt.executeQueryAndParse(ctx, req, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+func (clt *Client) executeQueryAndParse(ctx context.Context, req *http.Request, into any) error {
 	log := logr.FromContextOrDiscard(ctx)
 	log.V(1).Info("Awaiting response")
 	resp, err := clt.HttpClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("request failed: %w", err)
+		return fmt.Errorf("request failed: %w", err)
 	}
 	defer resp.Body.Close()
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("cannot read body: %w", err)
+		return fmt.Errorf("cannot read body: %w", err)
 	}
 	log.V(2).Info("Read response", "body", string(b))
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("request failed: %s: %s", resp.Status, string(b))
+		return fmt.Errorf("request failed: %s: %s", resp.Status, string(b))
 	}
 
-	result := QueryResult{}
-	parseErr := json.Unmarshal(b, &result)
+	parseErr := json.Unmarshal(b, into)
 	if parseErr != nil {
-		return nil, fmt.Errorf("cannot parse JSON: %w", parseErr)
+		return fmt.Errorf("cannot parse JSON: %w", parseErr)
 	}
-	log.V(1).Info("Parsed response", "result", result)
-	return &result, nil
+	log.V(1).Info("Parsed response", "result", into)
+	return nil
 }
 
 func paramsToValues(params QueryParams) url.Values {
