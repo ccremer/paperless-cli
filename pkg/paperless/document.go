@@ -1,5 +1,15 @@
 package paperless
 
+import (
+	"bytes"
+	"context"
+	"encoding/json"
+	"fmt"
+	"net/http"
+
+	"github.com/go-logr/logr"
+)
+
 type Document struct {
 	// ID of the document, read-only.
 	ID int `json:"id"`
@@ -24,4 +34,29 @@ func MapToDocumentMap(docs []Document) map[int]Document {
 		docM[doc.ID] = doc
 	}
 	return docM
+}
+
+func (clt *Client) makeUpdateDocumentRequest(ctx context.Context, params BulkDownloadParams) (*http.Request, error) {
+	log := logr.FromContextOrDiscard(ctx)
+
+	js := map[string]any{
+		"content":           params.Content,
+		"follow_formatting": params.FollowFormatting,
+		"documents":         params.DocumentIDs,
+	}
+	marshal, err := json.Marshal(js)
+	if err != nil {
+		return nil, fmt.Errorf("cannot serialize to JSON: %w", err)
+	}
+	body := bytes.NewReader(marshal)
+
+	path := clt.URL + "/api/documents/bulk_download/"
+	log.V(1).Info("Preparing request", "path", path, "document_ids", params.DocumentIDs)
+	req, err := http.NewRequestWithContext(ctx, "POST", path, body)
+	if err != nil {
+		return nil, fmt.Errorf("cannot prepare request: %w", err)
+	}
+	clt.setAuth(req)
+	req.Header.Set("Content-Type", "application/json")
+	return req, nil
 }
