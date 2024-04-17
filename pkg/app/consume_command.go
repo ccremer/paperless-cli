@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"fmt"
@@ -24,7 +24,7 @@ type ConsumeCommand struct {
 	ConsumeDelay   time.Duration
 }
 
-func newConsumeCommand() *ConsumeCommand {
+func NewConsumeCommand() *ConsumeCommand {
 	c := &ConsumeCommand{}
 	c.Command = cli.Command{
 		Name:   "consume",

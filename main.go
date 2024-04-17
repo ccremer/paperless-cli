@@ -5,8 +5,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/ccremer/paperless-cli/pkg/app"
 	"github.com/ccremer/plogr"
-	"github.com/urfave/cli/v2"
 )
 
 var (
@@ -14,76 +14,14 @@ var (
 	version = "unknown"
 	commit  = "-dirty-"
 	date    = time.Now().Format("2006-01-02")
-
-	appName     = "paperless-cli"
-	appLongName = "CLI tool to interact with paperless-ngx remote API "
-
-	// envPrefix is the global prefix to use for the keys in environment variables
-	envPrefix = "PAPERLESS_"
 )
 
 func main() {
-	app := NewApp()
-	err := app.Run(os.Args)
+	appInstance := app.NewApp()
+	appInstance.Version = fmt.Sprintf("%s, revision=%s, date=%s", version, commit, date)
+	err := appInstance.Run(os.Args)
 	if err != nil {
 		plogr.DefaultErrorPrinter.Println(err.Error())
 		os.Exit(1)
-	}
-}
-
-func NewApp() *cli.App {
-	app := &cli.App{
-		Name:    appName,
-		Usage:   appLongName,
-		Version: fmt.Sprintf("%s, revision=%s, date=%s", version, commit, date),
-
-		Before: before(loadConfigFileFn, setupLogging),
-		Flags: []cli.Flag{
-			newLogLevelFlag(),
-			newConfigFileFlag(),
-		},
-		Commands: []*cli.Command{
-			&newUploadCommand().Command,
-			&newBulkDownloadCommand().Command,
-			&newConsumeCommand().Command,
-			&newInitCommand().Command,
-		},
-	}
-	return app
-}
-
-// env combines envPrefix with given suffix delimited by underscore.
-func env(suffix string) string {
-	return envPrefix + suffix
-}
-
-// envVars combines envPrefix with each given suffix delimited by underscore.
-func envVars(suffixes ...string) []string {
-	arr := make([]string, len(suffixes))
-	for i := range suffixes {
-		arr[i] = env(suffixes[i])
-	}
-	return arr
-}
-
-func before(actions ...cli.BeforeFunc) cli.BeforeFunc {
-	return func(ctx *cli.Context) error {
-		for _, fn := range actions {
-			if err := fn(ctx); err != nil {
-				return err
-			}
-		}
-		return nil
-	}
-}
-
-func actions(actions ...cli.ActionFunc) cli.ActionFunc {
-	return func(ctx *cli.Context) error {
-		for _, action := range actions {
-			if err := action(ctx); err != nil {
-				return err
-			}
-		}
-		return nil
 	}
 }

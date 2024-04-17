@@ -1,0 +1,73 @@
+package app
+
+import (
+	"github.com/urfave/cli/v2"
+)
+
+var (
+	appName     = "paperless-cli"
+	appLongName = "CLI tool to interact with paperless-ngx remote API "
+
+	version string
+	commit  string
+	date    string
+)
+
+// envPrefix is the global prefix to use for the keys in environment variables
+var envPrefix = "PAPERLESS_"
+
+func NewApp() *cli.App {
+	app := &cli.App{
+		Name:  appName,
+		Usage: appLongName,
+
+		Before: before(loadConfigFileFn, setupLogging),
+		Flags: []cli.Flag{
+			newLogLevelFlag(),
+			newConfigFileFlag(),
+		},
+		Commands: []*cli.Command{
+			&newUploadCommand().Command,
+			&newBulkDownloadCommand().Command,
+			&NewConsumeCommand().Command,
+			&newInitCommand().Command,
+		},
+	}
+	return app
+}
+
+// env combines envPrefix with given suffix delimited by underscore.
+func env(suffix string) string {
+	return envPrefix + suffix
+}
+
+// envVars combines envPrefix with each given suffix delimited by underscore.
+func envVars(suffixes ...string) []string {
+	arr := make([]string, len(suffixes))
+	for i := range suffixes {
+		arr[i] = env(suffixes[i])
+	}
+	return arr
+}
+
+func before(actions ...cli.BeforeFunc) cli.BeforeFunc {
+	return func(ctx *cli.Context) error {
+		for _, fn := range actions {
+			if err := fn(ctx); err != nil {
+				return err
+			}
+		}
+		return nil
+	}
+}
+
+func actions(actions ...cli.ActionFunc) cli.ActionFunc {
+	return func(ctx *cli.Context) error {
+		for _, action := range actions {
+			if err := action(ctx); err != nil {
+				return err
+			}
+		}
+		return nil
+	}
+}
