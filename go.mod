@@ -7,7 +7,7 @@ toolchain go1.21.4
 require (
 	github.com/ccremer/plogr v0.7.0
 	github.com/fsnotify/fsnotify v1.7.0
-	github.com/go-logr/logr v1.4.1
+	github.com/go-logr/logr v1.4.2
 	github.com/pterm/pterm v0.12.79
 	github.com/stretchr/testify v1.9.0
 	github.com/urfave/cli/v2 v2.27.1
