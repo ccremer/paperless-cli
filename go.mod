@@ -1,12 +1,10 @@
 module github.com/ccremer/paperless-cli
 
-go 1.21
-
-toolchain go1.21.4
+go 1.23
 
 require (
 	github.com/ccremer/plogr v0.7.0
-	github.com/fsnotify/fsnotify v1.7.0
+	github.com/fsnotify/fsnotify v1.10.1
 	github.com/go-logr/logr v1.4.1
 	github.com/pterm/pterm v0.12.79
 	github.com/stretchr/testify v1.11.1
